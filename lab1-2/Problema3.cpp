@@ -1,45 +1,68 @@
-#include <bits/stdc++.h>
+#include <stdio.h>
+#include <cstring>
 
 using namespace std;
 
-void Words(char str[]) {
-    char v[101][101];
+float chartofloat(char str[])
+{
+    float rezultat = 0.0f;
+    float fractie = 1.0f;
+    bool esteNegativ = false;
+    bool esteFractie = false;
+    int i = 0;
 
-    char *p=strtok(str," ");
-    int i=0;
-    while(p) {
-        strcpy(v[++i], p);
-        p=strtok(NULL, " ");
-
+    if (str[i] == '-')
+    {
+        esteNegativ = true;
+        i++;
     }
 
-    for(int k=1; k<i; k++)
-        for(int j=k+1; j<=i; j++)
-            if(strlen(v[k])<strlen(v[j]))
-                swap(v[j],v[k]);
-                
-    for(int k=1;k<i;k++)
-        for(int j=k+1;j<=i;j++)
-            if(strlen(v[k])==strlen(v[j])&&strcmp(v[k], v[j])>0)
-                swap(v[j],v[k]);
+    for (i = 0; i < strlen(str); i++)
+    {
+        if (str[i] == '.')
+        {
+            if (esteFractie)
+            {
+                return 0.0f;
+            }
+            esteFractie = true;
+        }
+        else if (str[i] >= '0' && str[i] <= '9')
+        {
+            if (esteFractie)
+            {
+                fractie /= 10.0f;
+                rezultat += (str[i] - '0') * fractie;
+            }
+            else
+            {
+                rezultat = rezultat * 10.0f + (str[i] - '0');
+            }
+        }
+    }
+    if (esteNegativ)
+    {
+        rezultat = -rezultat;
+    }
 
-    for(int r=1; r<=i; r++)
-        printf("%s\n",v[r]);
-
+    return rezultat;
 }
 
 int main()
 {
     char str[101];
+    float sum=0.0f;
     FILE * openFile;
 
     openFile = fopen("in.txt", "r");
 
-    if(fgets (str, 101, openFile) != NULL)
+    while(fgets (str, 101, openFile) != NULL)
     {
-        Words(str);
+        sum += chartofloat(str);
+        strcpy(str,"");
     }
 
     fclose(openFile);
+    printf("Sum is: %0.0f", sum);
     return 0;
 }
